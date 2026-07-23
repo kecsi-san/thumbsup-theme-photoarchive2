@@ -24,29 +24,29 @@
   <a href="{{relative urls.download}}" 
     data-src="{{relative urls.large}}"
     data-sub-html='
-      {{~#if meta.caption~}}
-        <p class="caption">{{meta.caption}}</p>
-      {{~else~}}
-        <p class="caption">{{filename}}</p>
-      {{~/if~}}
-      <p class="date">{{date meta.date}}</p>
-      {{~#if meta.exif~}}
-        <div class="lg-exif-panel">
-          <p class="exif">
-            {{~#if meta.exif.Make}}{{meta.exif.Make}} {{meta.exif.Model}}{{/if~}}
-            {{~#if meta.exif.FNumber}} &middot; f/{{meta.exif.FNumber}}{{/if~}}
-            {{~#if meta.exif.ExposureTime}} &middot; {{meta.exif.ExposureTime}}s{{/if~}}
-            {{~#if meta.exif.ISO}} &middot; ISO {{meta.exif.ISO}}{{/if~}}
-            {{~#if meta.exif.FocalLength}} &middot; {{meta.exif.FocalLength}}{{/if~}}
-          </p>
+      <div class="lg-info-header">
+        <h3>Image Information</h3>
+        <button type="button" class="lg-info-close-btn" aria-label="Close photo info">&times;</button>
+      </div>
+      <div class="lg-info-body">
+        <p><span class="label">Filename:</span> {{#if meta.caption}}{{meta.caption}}{{else}}{{filename}}{{/if}}</p>
+        <p><span class="label">Date Taken:</span> {{date meta.date "M/D/YYYY, h:mm:ss A"}}</p>
+        {{~#if meta.exif~}}
+          {{~#if meta.exif.FNumber}}<p><span class="label">Aperture:</span> f/{{meta.exif.FNumber}}</p>{{/if~}}
+          {{~#if meta.exif.ExposureTime}}<p><span class="label">Exposure:</span> {{meta.exif.ExposureTime}} sec</p>{{/if~}}
+          {{~#if meta.exif.ISO}}<p><span class="label">ISO:</span> {{meta.exif.ISO}}</p>{{/if~}}
+          {{~#if meta.exif.FocalLength}}<p><span class="label">Focal Length:</span> {{meta.exif.FocalLength}}</p>{{/if~}}
+          {{~#if meta.exif.Model}}<p><span class="label">Model:</span> {{meta.exif.Model}}</p>{{/if~}}
+          {{~#if meta.exif.Make}}<p><span class="label">Make:</span> {{meta.exif.Make}}</p>{{/if~}}
           {{~#if meta.exif.GPSLatitude~}}
-            <div class="exif-map">
-              <iframe src="{{osmEmbed meta.exif.GPSLatitude meta.exif.GPSLongitude}}" loading="lazy"></iframe>
-              <a class="exif-map-link" href="{{osmLink meta.exif.GPSLatitude meta.exif.GPSLongitude}}" target="_blank" rel="noopener">Open larger map</a>
-            </div>
+            <hr>
+            <p><span class="label">Latitude:</span> {{meta.exif.GPSLatitude}} {{meta.exif.GPSLatitudeRef}}</p>
+            <p><span class="label">Longitude:</span> {{meta.exif.GPSLongitude}} {{meta.exif.GPSLongitudeRef}}</p>
+            {{~#if meta.exif.GPSAltitude}}<p><span class="label">Altitude:</span> {{meta.exif.GPSAltitude}}</p>{{/if~}}
+            <div class="lg-map" data-lat="{{meta.exif.GPSLatitude}}" data-lon="{{meta.exif.GPSLongitude}}"></div>
           {{~/if~}}
-        </div>
-      {{~/if~}}
+        {{~/if~}}
+      </div>
     '
     data-download-url="{{relative urls.download}}"
     

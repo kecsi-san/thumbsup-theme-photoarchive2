@@ -13,6 +13,8 @@
 
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/justifiedGallery/3.8.1/css/justifiedGallery.min.css" integrity="sha512-CRFv/YVJyElHXTiMgnhWKd2f04Hd/BUJkwcyqYmlpL1ugSYW23nNRazLk960mlz7dugTrETCGGjcsnspPOS6qA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
+      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
   </head>
 
   <body>
@@ -29,13 +31,53 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/zoom/lg-zoom.min.js" integrity="sha512-BLW2Jrofiqm6m7JhkQDIh2olT0EBI58+hIL/AXWvo8gOXKmsNlU6myJyEkTy6rOAAZjn0032FRk8sl9RgXPYIQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/thumbnail/lg-thumbnail.min.js" integrity="sha512-VBbe8aA3uiK90EUKJnZ4iEs0lKXRhzaAXL8CIHWYReUwULzxkOSxlNixn41OLdX0R1KNP23/s76YPyeRhE6P+Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/autoplay/lg-autoplay.min.js" integrity="sha512-1YRlp9jO1ermVx9E3UzfBwoo88ODK0i9l2C2lNoZwCZAzvRdA+O0Lm00bUfkIf/A1esj4OK9yZ3yfgfa+FcYwg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script type="text/javascript">
       var gallery = document.getElementById('gallery');
+      var currentMap = null;
 
-      // Custom info-toggle button: shows/hides the EXIF + map panel,
-      // which stays hidden by default inside .lg-sub-html
+      function setInfoVisible (visible) {
+        var outer = document.querySelector('.lg-outer');
+        if (!outer) return;
+        outer.classList.toggle('lg-info-visible', visible);
+        if (visible) {
+          initMapIfPresent();
+        }
+        // The sidebar claims/releases width from the image area -
+        // nudge lightGallery to recompute the image size for it.
+        setTimeout(function () {
+          window.dispatchEvent(new Event('resize'));
+        }, 260);
+      }
+
+      // (Re)creates the Leaflet map for the currently displayed photo,
+      // only while the info panel is actually visible - Leaflet can't
+      // size itself correctly inside a display:none container.
+      function initMapIfPresent () {
+        var outer = document.querySelector('.lg-outer');
+        if (!outer || !outer.classList.contains('lg-info-visible')) return;
+        if (currentMap) {
+          currentMap.remove();
+          currentMap = null;
+        }
+        var mapEl = document.querySelector('.lg-map');
+        if (!mapEl) return;
+        var lat = parseFloat(mapEl.getAttribute('data-lat'));
+        var lon = parseFloat(mapEl.getAttribute('data-lon'));
+        if (isNaN(lat) || isNaN(lon)) return;
+        currentMap = L.map(mapEl).setView([lat, lon], 14);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(currentMap);
+        L.marker([lat, lon]).addTo(currentMap);
+      }
+
+      // Custom info-toggle button in the toolbar, placed right before
+      // the close icon (matches: play, download, info, close)
       gallery.addEventListener('lgAfterOpen', function () {
         var toolbar = document.querySelector('.lg-toolbar');
+        var closeBtn = toolbar && toolbar.querySelector('.lg-close');
         if (toolbar && !toolbar.querySelector('.lg-info-toggle-btn')) {
           var btn = document.createElement('button');
           btn.type = 'button';
@@ -43,9 +85,20 @@
           btn.setAttribute('aria-label', 'Toggle photo info');
           btn.innerHTML = '&#9432;';
           btn.addEventListener('click', function () {
-            document.querySelector('.lg-outer').classList.toggle('lg-info-visible');
+            setInfoVisible(!document.querySelector('.lg-outer').classList.contains('lg-info-visible'));
           });
-          toolbar.appendChild(btn);
+          toolbar.insertBefore(btn, closeBtn || null);
+        }
+      });
+
+      // Re-render the map (or clear it) whenever the slide changes
+      gallery.addEventListener('lgAfterSlide', initMapIfPresent);
+
+      // The info panel's own close (x) button - event delegation since
+      // .lg-sub-html content gets replaced on every slide change
+      document.addEventListener('click', function (e) {
+        if (e.target.closest && e.target.closest('.lg-info-close-btn')) {
+          setInfoVisible(false);
         }
       });
 

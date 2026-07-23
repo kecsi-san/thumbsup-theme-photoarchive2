@@ -303,47 +303,95 @@ div.album .album-info {
   }
 }
 
+// Image Information sidebar - hidden until the info toggle button is
+// clicked, then docked to the right, its own space (not overlapping
+// the photo), matching the info panel of thumbsup's "flow" theme.
+@info-panel-width: 340px;
+
 .lg-sub-html {
-  .caption {
-    font-weight: bold;
-  }
-
-  .date {
-    font-weight: 300;
-  }
-
-  .exif {
-    font-weight: 300;
-    font-size: 0.85em;
-    color: var(--tertiary);
-  }
-}
-
-// EXIF/GPS info panel - hidden until the info toggle button is clicked
-.lg-exif-panel {
   display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: auto;
+  width: @info-panel-width;
+  max-width: 90vw;
+  box-sizing: border-box;
+  overflow-y: auto;
+  text-align: left;
+  padding: 20px;
+  background-color: #0d0a0a;
+  color: #ccc;
+  transition: none;
 }
 
-.lg-outer.lg-info-visible .lg-exif-panel {
+.lg-outer.lg-info-visible .lg-sub-html {
   display: block;
-  margin-top: 8px;
 }
 
-.exif-map {
+// Reserve the sidebar's width so the toolbar, image and thumbnail
+// strip resize around it instead of being covered by it
+.lg-outer.lg-info-visible {
+  .lg-toolbar,
+  .lg-inner,
+  .lg-thumb-outer {
+    right: @info-panel-width;
+  }
+}
+
+.lg-info-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+
+  h3 {
+    margin: 0;
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #fff;
+  }
+}
+
+.lg-info-close-btn {
+  background: none;
+  border: none;
+  color: #ccc;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+
+  &:hover {
+    color: #fff;
+  }
+}
+
+.lg-info-body {
+  p {
+    margin: 0 0 8px;
+    font-size: 0.9em;
+  }
+
+  .label {
+    font-weight: 600;
+    color: #fff;
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    margin: 12px 0;
+  }
+}
+
+.lg-map {
+  height: 220px;
+  width: 100%;
   margin-top: 8px;
-
-  iframe {
-    width: 100%;
-    max-width: 400px;
-    height: 200px;
-    border: 0;
-  }
-
-  .exif-map-link {
-    display: block;
-    font-size: 0.8em;
-    margin-top: 4px;
-  }
 }
 
 .lg-info-toggle-btn {
