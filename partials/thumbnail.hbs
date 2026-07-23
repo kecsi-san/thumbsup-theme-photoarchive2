@@ -30,6 +30,18 @@
         <p class="caption">{{filename}}</p>
       {{~/if~}}
       <p class="date">{{date meta.date}}</p>
+      {{~#if meta.exif~}}
+        <p class="exif">
+          {{~#if meta.exif.Make}}{{meta.exif.Make}} {{meta.exif.Model}}{{/if~}}
+          {{~#if meta.exif.FNumber}} &middot; f/{{meta.exif.FNumber}}{{/if~}}
+          {{~#if meta.exif.ExposureTime}} &middot; {{meta.exif.ExposureTime}}s{{/if~}}
+          {{~#if meta.exif.ISO}} &middot; ISO {{meta.exif.ISO}}{{/if~}}
+          {{~#if meta.exif.FocalLength}} &middot; {{meta.exif.FocalLength}}{{/if~}}
+        </p>
+        {{~#if meta.exif.GPSLatitude~}}
+          <p class="exif-gps"><a href="https://www.google.com/maps?q={{meta.exif.GPSLatitude}},{{meta.exif.GPSLongitude}}" target="_blank" rel="noopener">View on map</a></p>
+        {{~/if~}}
+      {{~/if~}}
     '
     data-download-url="{{relative urls.download}}"
     
