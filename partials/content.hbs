@@ -1,6 +1,12 @@
 <div id="container">
 
   <header id="topbar">
+    <div class="topbar-row">
+      <a class="site-title" href="{{relative gallery.home.url}}">{{gallery.title}}</a>
+      <div class="control-bar">
+        {{> dark-light-toggle}} {{> BW-toggle}}
+      </div>
+    </div>
     <nav class="breadcrumbs">
       {{~#unless album.home~}}
         {{#each breadcrumbs~}}
@@ -9,9 +15,6 @@
         <a class="breadcrumb-item" href="{{relative album.url}}">{{album.title}}</a>
       {{~/unless~}}
     </nav>
-    <div class="control-bar">
-      {{> dark-light-toggle}} {{> BW-toggle}}
-    </div>
   </header>
 
   <div id="content">
@@ -24,7 +27,7 @@
 
     <!-- Subalbums -->
     {{#if album.albums}}
-      <div id="albums">
+      <div id="albums" class="justified-gallery">
         {{#each album.albums~}}
           {{> subalbum}}
         {{~/each}}
