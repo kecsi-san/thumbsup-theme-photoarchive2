@@ -308,13 +308,12 @@ div.album .album-info {
 // the photo), matching the info panel of thumbsup's "flow" theme.
 @info-panel-width: 340px;
 
-.lg-sub-html {
+.lg-info-panel {
   display: none;
-  position: absolute;
+  position: fixed;
   top: 0;
   right: 0;
   bottom: 0;
-  left: auto;
   width: @info-panel-width;
   max-width: 90vw;
   box-sizing: border-box;
@@ -323,20 +322,24 @@ div.album .album-info {
   padding: 20px;
   background-color: #0d0a0a;
   color: #ccc;
-  transition: none;
+  z-index: 1090; // above .lg-outer (~1050-1082)
 }
 
-.lg-outer.lg-info-visible .lg-sub-html {
+.lg-info-panel.lg-info-panel-open {
   display: block;
 }
 
 // Reserve the sidebar's width so the toolbar, image and thumbnail
-// strip resize around it instead of being covered by it
+// strip resize around it instead of being covered by it.
+// These elements all have an explicit `width` set by lightGallery's
+// own CSS, so overriding `right` alone has no effect - `width` is
+// what actually needs shrinking. .lg-thumb-outer is also `float:left`,
+// on which `right` never applies at all.
 .lg-outer.lg-info-visible {
   .lg-toolbar,
   .lg-inner,
   .lg-thumb-outer {
-    right: @info-panel-width;
+    width: calc(100% - @info-panel-width);
   }
 }
 

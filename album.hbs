@@ -36,10 +36,67 @@
       var gallery = document.getElementById('gallery');
       var currentMap = null;
 
+      // Independent info panel appended directly to <body> - deliberately
+      // NOT using lightGallery's data-sub-html/.lg-sub-html mechanism,
+      // since that element is animated/repositioned by lightGallery's own
+      // JS for its default bottom-caption-bar use case, which fights any
+      // attempt to turn it into a persistent full-height sidebar.
+      var infoPanel = document.createElement('div');
+      infoPanel.className = 'lg-info-panel';
+      infoPanel.innerHTML =
+        '<div class="lg-info-header">' +
+          '<h3>Image Information</h3>' +
+          '<button type="button" class="lg-info-close-btn" aria-label="Close photo info">&times;</button>' +
+        '</div>' +
+        '<div class="lg-info-body"></div>';
+      document.body.appendChild(infoPanel);
+      infoPanel.querySelector('.lg-info-close-btn').addEventListener('click', function () {
+        setInfoVisible(false);
+      });
+
+      function escapeHtml (str) {
+        var div = document.createElement('div');
+        div.textContent = str == null ? '' : str;
+        return div.innerHTML;
+      }
+
+      function fieldRow (label, value) {
+        if (!value) return '';
+        return '<p><span class="label">' + label + ':</span> ' + escapeHtml(value) + '</p>';
+      }
+
+      // Reads the data-* attributes (already rendered server-side per
+      // photo) off the original thumbnail element for the given slide
+      // index, and renders them into the info panel body.
+      function renderInfoPanel (index) {
+        var items = gallery.querySelectorAll(':scope > a, :scope > li');
+        var el = items[index];
+        var body = infoPanel.querySelector('.lg-info-body');
+        if (!el) { body.innerHTML = ''; return; }
+        var d = el.dataset;
+        var html = '';
+        html += fieldRow('Filename', d.caption);
+        html += fieldRow('Date Taken', d.dateTaken);
+        html += fieldRow('Aperture', d.fnumber ? 'f/' + d.fnumber : '');
+        html += fieldRow('Exposure', d.exposuretime ? d.exposuretime + ' sec' : '');
+        html += fieldRow('ISO', d.isospeedratings);
+        html += fieldRow('Focal Length', d.focallength);
+        html += fieldRow('Model', d.model);
+        html += fieldRow('Make', d.make);
+        if (d.gpslatitude) {
+          html += '<hr>';
+          html += fieldRow('Latitude', d.gpslatitude + ' ' + (d.gpslatituderef || ''));
+          html += fieldRow('Longitude', d.gpslongitude + ' ' + (d.gpslongituderef || ''));
+          html += fieldRow('Altitude', d.gpsaltitude);
+          html += '<div class="lg-map" data-lat="' + d.gpslatitude + '" data-lon="' + d.gpslongitude + '"></div>';
+        }
+        body.innerHTML = html;
+      }
+
       function setInfoVisible (visible) {
+        infoPanel.classList.toggle('lg-info-panel-open', visible);
         var outer = document.querySelector('.lg-outer');
-        if (!outer) return;
-        outer.classList.toggle('lg-info-visible', visible);
+        if (outer) outer.classList.toggle('lg-info-visible', visible);
         if (visible) {
           initMapIfPresent();
         }
@@ -54,13 +111,12 @@
       // only while the info panel is actually visible - Leaflet can't
       // size itself correctly inside a display:none container.
       function initMapIfPresent () {
-        var outer = document.querySelector('.lg-outer');
-        if (!outer || !outer.classList.contains('lg-info-visible')) return;
+        if (!infoPanel.classList.contains('lg-info-panel-open')) return;
         if (currentMap) {
           currentMap.remove();
           currentMap = null;
         }
-        var mapEl = document.querySelector('.lg-map');
+        var mapEl = infoPanel.querySelector('.lg-map');
         if (!mapEl) return;
         var lat = parseFloat(mapEl.getAttribute('data-lat'));
         var lon = parseFloat(mapEl.getAttribute('data-lon'));
@@ -85,21 +141,22 @@
           btn.setAttribute('aria-label', 'Toggle photo info');
           btn.innerHTML = '&#9432;';
           btn.addEventListener('click', function () {
-            setInfoVisible(!document.querySelector('.lg-outer').classList.contains('lg-info-visible'));
+            setInfoVisible(!infoPanel.classList.contains('lg-info-panel-open'));
           });
           toolbar.insertBefore(btn, closeBtn || null);
         }
+        renderInfoPanel(0);
       });
 
-      // Re-render the map (or clear it) whenever the slide changes
-      gallery.addEventListener('lgAfterSlide', initMapIfPresent);
+      // Hide the panel again once the lightbox itself closes
+      gallery.addEventListener('lgAfterClose', function () {
+        setInfoVisible(false);
+      });
 
-      // The info panel's own close (x) button - event delegation since
-      // .lg-sub-html content gets replaced on every slide change
-      document.addEventListener('click', function (e) {
-        if (e.target.closest && e.target.closest('.lg-info-close-btn')) {
-          setInfoVisible(false);
-        }
+      // Re-render the info panel and map whenever the slide changes
+      gallery.addEventListener('lgAfterSlide', function (event) {
+        renderInfoPanel(event.detail.index);
+        initMapIfPresent();
       });
 
       lightGallery(gallery, {
@@ -108,7 +165,6 @@
         controls: true,
         counter: true,
         download: true,
-        appendSubHtmlTo: ".lg-sub-html",
         licenseKey: "GNU GPL license v3", // not for commercial use!
 
         thumbnail: true,

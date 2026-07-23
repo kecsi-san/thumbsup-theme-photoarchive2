@@ -21,44 +21,19 @@
     Image thumbnails
   --}}
 
-  <a href="{{relative urls.download}}" 
+  <a href="{{relative urls.download}}"
     data-src="{{relative urls.large}}"
-    data-sub-html='
-      <div class="lg-info-header">
-        <h3>Image Information</h3>
-        <button type="button" class="lg-info-close-btn" aria-label="Close photo info">&times;</button>
-      </div>
-      <div class="lg-info-body">
-        <p><span class="label">Filename:</span> {{#if meta.caption}}{{meta.caption}}{{else}}{{filename}}{{/if}}</p>
-        <p><span class="label">Date Taken:</span> {{date meta.date "M/D/YYYY, h:mm:ss A"}}</p>
-        {{~#if meta.exif~}}
-          {{~#if meta.exif.FNumber}}<p><span class="label">Aperture:</span> f/{{meta.exif.FNumber}}</p>{{/if~}}
-          {{~#if meta.exif.ExposureTime}}<p><span class="label">Exposure:</span> {{meta.exif.ExposureTime}} sec</p>{{/if~}}
-          {{~#if meta.exif.ISO}}<p><span class="label">ISO:</span> {{meta.exif.ISO}}</p>{{/if~}}
-          {{~#if meta.exif.FocalLength}}<p><span class="label">Focal Length:</span> {{meta.exif.FocalLength}}</p>{{/if~}}
-          {{~#if meta.exif.Model}}<p><span class="label">Model:</span> {{meta.exif.Model}}</p>{{/if~}}
-          {{~#if meta.exif.Make}}<p><span class="label">Make:</span> {{meta.exif.Make}}</p>{{/if~}}
-          {{~#if meta.exif.GPSLatitude~}}
-            <hr>
-            <p><span class="label">Latitude:</span> {{meta.exif.GPSLatitude}} {{meta.exif.GPSLatitudeRef}}</p>
-            <p><span class="label">Longitude:</span> {{meta.exif.GPSLongitude}} {{meta.exif.GPSLongitudeRef}}</p>
-            {{~#if meta.exif.GPSAltitude}}<p><span class="label">Altitude:</span> {{meta.exif.GPSAltitude}}</p>{{/if~}}
-            <div class="lg-map" data-lat="{{meta.exif.GPSLatitude}}" data-lon="{{meta.exif.GPSLongitude}}"></div>
-          {{~/if~}}
-        {{~/if~}}
-      </div>
-    '
     data-download-url="{{relative urls.download}}"
-    
+
     data-filename="{{filename}}"
+    data-caption="{{#if meta.caption}}{{meta.caption}}{{else}}{{filename}}{{/if}}"
+    data-date-taken="{{date meta.date "M/D/YYYY, h:mm:ss A"}}"
 
     {{#if meta.exif}}
-      data-datetimeoriginal="{{meta.exif.DateTimeOriginal}}"
       data-fnumber="{{meta.exif.FNumber}}"
       data-exposuretime="{{meta.exif.ExposureTime}}"
       data-isospeedratings="{{meta.exif.ISO}}"
       data-focallength="{{meta.exif.FocalLength}}"
-      data-lens="{{meta.exif.Lens}}"
       data-model="{{meta.exif.Model}}"
       data-make="{{meta.exif.Make}}"
       data-gpslatitude="{{meta.exif.GPSLatitude}}"
