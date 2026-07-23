@@ -329,19 +329,23 @@ img {
   filter: unset;
 }
 
-// override justifiedgallery 
+// override justifiedgallery
 .justified-gallery>a>img,
 .justified-gallery>div>img,
 .justified-gallery>figure>img,
+.justified-gallery>li>img,
 .justified-gallery>a>a>img,
 .justified-gallery>div>a>img,
 .justified-gallery>figure>a>img,
+.justified-gallery>li>a>img,
 .justified-gallery>a>svg,
 .justified-gallery>div>svg,
 .justified-gallery>figure>svg,
+.justified-gallery>li>svg,
 .justified-gallery>a>a>svg,
 .justified-gallery>div>a>svg,
-.justified-gallery>figure>a>svg {
+.justified-gallery>figure>a>svg,
+.justified-gallery>li>a>svg {
   filter: "alpha(opacity=100)";
   opacity: 1;
 }
@@ -351,6 +355,32 @@ img {
 .justified-gallery>figure {
   filter: "alpha(opacity=100)";
   opacity: 1;
+}
+
+// video thumbnails use <li> as their root element (needed for the
+// play-icon overlay + lightGallery's data-html trigger), but
+// justifiedGallery's default `selector` option only recognizes
+// `a` and `div` as gallery entries - without these rules, <li>
+// entries never get positioned/sized and are clipped away by the
+// gallery container's overflow:hidden.
+.justified-gallery>li {
+  position: absolute;
+  display: inline-block;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  filter: "alpha(opacity=100)";
+  opacity: 1;
+}
+
+.justified-gallery>li>img,
+.justified-gallery>li>a>img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: 0;
+  padding: 0;
+  border: none;
 }
 
 // Lightgallery
