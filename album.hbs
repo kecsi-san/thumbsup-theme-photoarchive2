@@ -28,25 +28,49 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/lightgallery.min.js" integrity="sha512-jEJ0OA9fwz5wUn6rVfGhAXiiCSGrjYCwtQRUwI/wRGEuWRZxrnxoeDoNc+Pnhx8qwKVHs2BRQrVR9RE6T4UHBg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/zoom/lg-zoom.min.js" integrity="sha512-BLW2Jrofiqm6m7JhkQDIh2olT0EBI58+hIL/AXWvo8gOXKmsNlU6myJyEkTy6rOAAZjn0032FRk8sl9RgXPYIQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/thumbnail/lg-thumbnail.min.js" integrity="sha512-VBbe8aA3uiK90EUKJnZ4iEs0lKXRhzaAXL8CIHWYReUwULzxkOSxlNixn41OLdX0R1KNP23/s76YPyeRhE6P+Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/autoplay/lg-autoplay.min.js" integrity="sha512-1YRlp9jO1ermVx9E3UzfBwoo88ODK0i9l2C2lNoZwCZAzvRdA+O0Lm00bUfkIf/A1esj4OK9yZ3yfgfa+FcYwg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script type="text/javascript">
-      lightGallery(document.getElementById('gallery'), {
+      var gallery = document.getElementById('gallery');
+
+      // Custom info-toggle button: shows/hides the EXIF + map panel,
+      // which stays hidden by default inside .lg-sub-html
+      gallery.addEventListener('lgAfterOpen', function () {
+        var toolbar = document.querySelector('.lg-toolbar');
+        if (toolbar && !toolbar.querySelector('.lg-info-toggle-btn')) {
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'lg-icon lg-info-toggle-btn';
+          btn.setAttribute('aria-label', 'Toggle photo info');
+          btn.innerHTML = '&#9432;';
+          btn.addEventListener('click', function () {
+            document.querySelector('.lg-outer').classList.toggle('lg-info-visible');
+          });
+          toolbar.appendChild(btn);
+        }
+      });
+
+      lightGallery(gallery, {
         speed: 400,
         loop : false,
         controls: true,
         counter: true,
-        download: false,
-        appendSubHtmlTo: ".lg-sub-html", 
+        download: true,
+        appendSubHtmlTo: ".lg-sub-html",
         licenseKey: "GNU GPL license v3", // not for commercial use!
-        
+
         thumbnail: true,
         toggleThumb: true,
         animateThumb: true,
-        allowMediaOverlap: false,
+        allowMediaOverlap: true,
         enableThumbDrag: true,
         thumbWidth: 75,
         thumbHeight: "50px",
 
-        plugins: [lgZoom, lgThumbnail]
+        autoplay: false,
+        progressBar: true,
+        autoplayControls: true,
+
+        plugins: [lgZoom, lgThumbnail, lgAutoplay]
       });
       console.log("started lightgallery")
     </script>

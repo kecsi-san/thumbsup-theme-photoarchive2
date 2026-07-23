@@ -317,10 +317,38 @@ div.album .album-info {
     font-size: 0.85em;
     color: var(--tertiary);
   }
+}
 
-  .exif-gps a {
-    font-size: 0.85em;
+// EXIF/GPS info panel - hidden until the info toggle button is clicked
+.lg-exif-panel {
+  display: none;
+}
+
+.lg-outer.lg-info-visible .lg-exif-panel {
+  display: block;
+  margin-top: 8px;
+}
+
+.exif-map {
+  margin-top: 8px;
+
+  iframe {
+    width: 100%;
+    max-width: 400px;
+    height: 200px;
+    border: 0;
   }
+
+  .exif-map-link {
+    display: block;
+    font-size: 0.8em;
+    margin-top: 4px;
+  }
+}
+
+.lg-info-toggle-btn {
+  font-size: 22px;
+  cursor: pointer;
 }
 
 // CONTROL BUTTONS  
