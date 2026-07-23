@@ -479,6 +479,14 @@ img {
 .lg-counter, .lg-sub-html {
   font-family: @body-font !important;
 }
+
+// We render our own independent .lg-info-panel instead - lightGallery's
+// built-in .lg-sub-html would otherwise auto-populate itself from each
+// thumbnail's alt text (needed for the grid hover caption) even with
+// no data-sub-html set, showing the filename under the enlarged photo.
+.lg-sub-html {
+  display: none !important;
+}
 div.lg-container {
   font-family: @body-font !important;
 }
