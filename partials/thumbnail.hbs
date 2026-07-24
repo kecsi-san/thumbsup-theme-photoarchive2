@@ -1,12 +1,31 @@
 {{~#if isVideo~}}
 
-  {{!-- TODO (left as default)
+  {{!--
     Video thumbnails
   --}}
 
   <li data-poster="{{relative urls.large}}"
       data-video='{"source": [{"src": "{{relative urls.video}}", "type": "video/mp4"}], "attributes": {"preload": false, "controls": true}}'
-      data-download-url="{{relative urls.download}}">
+      data-download-url="{{relative urls.download}}"
+
+      data-filename="{{filename}}"
+      data-caption="{{#if meta.caption}}{{meta.caption}}{{else}}{{filename}}{{/if}}"
+      data-date-taken="{{date meta.date "M/D/YYYY, h:mm:ss A"}}"
+
+      {{#if meta.exif}}
+        data-fnumber="{{meta.exif.FNumber}}"
+        data-exposuretime="{{meta.exif.ExposureTime}}"
+        data-isospeedratings="{{meta.exif.ISO}}"
+        data-focallength="{{meta.exif.FocalLength}}"
+        data-model="{{meta.exif.Model}}"
+        data-make="{{meta.exif.Make}}"
+        data-gpslatitude="{{meta.exif.GPSLatitude}}"
+        data-gpslongitude="{{meta.exif.GPSLongitude}}"
+        data-gpslatituderef="{{meta.exif.GPSLatitudeRef}}"
+        data-gpslongituderef="{{meta.exif.GPSLongitudeRef}}"
+        data-gpsaltitude="{{meta.exif.GPSAltitude}}"
+      {{/if}}
+  >
     <a href="{{relative urls.download}}">
       <img src="{{relative urls.thumbnail}}"
            width="{{@root.gallery.thumbSize}}"
