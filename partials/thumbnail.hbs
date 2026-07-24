@@ -4,7 +4,8 @@
     Video thumbnails
   --}}
 
-  <li data-html="#media{{id}}"
+  <li data-poster="{{relative urls.large}}"
+      data-video='{"source": [{"src": "{{relative urls.video}}", "type": "video/mp4"}], "attributes": {"preload": false, "controls": true}}'
       data-download-url="{{relative urls.download}}">
     <a href="{{relative urls.download}}">
       <img src="{{relative urls.thumbnail}}"
@@ -12,7 +13,9 @@
            height="{{@root.gallery.thumbSize}}"
            alt="{{filename}}" />
     </a>
-    <img class="video-overlay" src="{{relative 'public/play.png'}}" />
+    <div class="video-overlay">
+      <img src="{{relative 'public/play.png'}}" />
+    </div>
   </li>
 
 {{~else~}}

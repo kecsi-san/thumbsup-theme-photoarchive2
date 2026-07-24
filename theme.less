@@ -383,6 +383,51 @@ img {
   border: none;
 }
 
+// justifiedGallery.min.css only defines the caption show/hide rules for
+// `> a`, `> div` and `> figure` entries (base theme.less already covers
+// their opacity), not `> li` - without these, the `.caption` div that
+// justifiedGallery auto-creates from the thumbnail's alt text for video
+// tiles exists in the DOM but is never actually displayed.
+.justified-gallery>li>.caption {
+  display: none;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 5px;
+  background-color: #000000;
+  color: white;
+  font-size: 12px;
+  font-weight: 300;
+  font-family: sans-serif;
+}
+
+.justified-gallery>li>.caption.caption-visible {
+  display: initial;
+  opacity: 0.7;
+  transition: opacity 500ms ease-in;
+}
+
+// Play-icon overlay for video tiles: kept out of justifiedGallery's
+// `imgSelector` ("> img, > a > img") by living inside its own wrapper
+// div, so the plugin's caption/sizing logic only ever picks up the real
+// thumbnail <img> (needed for alt-text captions to work at all).
+.video-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 48px;
+  height: 48px;
+  pointer-events: none;
+
+  img {
+    width: 100%;
+    height: 100%;
+  }
+}
+
 // Lightgallery
 .lg-counter, .lg-sub-html {
   font-family: @body-font !important;
